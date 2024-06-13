@@ -8,24 +8,18 @@ const User = require("../models/User");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Rota para cadastro de novo usuário
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Verificar se o usuário já existe
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       return res
         .status(400)
         .json({ message: "Este email já está cadastrado." });
     }
 
-    // Criptografar a senha
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Criar um novo usuário
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
 
